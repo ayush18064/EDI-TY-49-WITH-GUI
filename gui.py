@@ -18,8 +18,8 @@ def run_video_inference(model_path, video_path, output_dir="output"):
         # Output settings
         os.makedirs(output_dir, exist_ok=True)
         output_path = os.path.join(output_dir, "output_video.mp4")
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Codec for MP4
-        fps = cap.get(cv2.CAP_PROP_FPS)
+        fourcc = cv2.VideoWriter_fourcc(*"avc1")  # Codec for MP4 (browser-friendly)
+        fps = int(cap.get(cv2.CAP_PROP_FPS))
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
@@ -105,9 +105,12 @@ if uploaded_file is not None:
 
         if output_video_path and os.path.exists(output_video_path):
             st.write("Inference completed. Processed video:")
-            # Ensure video MIME type is set correctly for Streamlit
+            # Display processed video
             with open(output_video_path, "rb") as video_file:
-                st.video(video_file.read())
+                video_bytes = video_file.read()
+                st.video(video_bytes)
+        else:
+            st.error("Error: Unable to process the video.")
     else:
         st.error("Unsupported file format! Please upload a valid image or video file.")
 
